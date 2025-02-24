@@ -1,0 +1,38 @@
+version: '3.1'
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: cms
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  web:
+    image: tomsik68/xampp
+    container_name: cms_xampp
+    restart: always
+    volumes:
+      - .:/opt/lampp/htdocs
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    command: ["/opt/lampp/lampp", "start"]
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
