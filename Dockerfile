@@ -13,7 +13,11 @@ RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 # Ajouter ServerName pour éviter l'avertissement Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Exposer le port 8080 (Railway attend ce port)
+# Modifier Apache pour écouter sur $PORT (fourni par Railway)
+RUN sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf && \
+    sed -i "s/<VirtualHost *:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf
+
+# Exposer le port (Railway lui donne une valeur dynamique)
 EXPOSE 8080
 
 # Lancer Apache
