@@ -7,11 +7,11 @@ COPY . /opt/lampp/htdocs
 # Assurer les bonnes permissions
 RUN chmod -R 755 /opt/lampp/htdocs
 
-# Modifier XAMPP pour écouter sur le port défini par Render
+# Modifier XAMPP pour écouter sur le port défini par Vercel
 RUN sed -i "s/Listen 80/Listen ${PORT}/" /opt/lampp/etc/httpd.conf
 
-# Exposer le port dynamique défini par Render
-EXPOSE 10000
+# Exposer le port attendu par Vercel
+EXPOSE 8080
 
-# Lancer Apache et MySQL en maintenant le conteneur actif
-CMD /bin/bash -c "/opt/lampp/lampp start && tail -f /dev/null"
+# Lancer Apache en arrière-plan et garder le conteneur actif
+CMD ["/opt/lampp/lampp", "start", "&&", "tail", "-f", "/dev/null"]
