@@ -1,15 +1,18 @@
 <?php
 require '../includes/db.php';
 require '../includes/functions.php';
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 
 $targetDir = "../uploads/"; // Dossier d'upload
 
 // Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php"); // Redirige vers la page de connexion
+    header("Location: ../login.php"); // Redirige vers la page de connexion
+    exit();
+}
+
+// 🔥 Vérifier que l'utilisateur est admin ou rédacteur
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'rédacteur')) {
+    header("Location: ../login.php"); // Redirection si non autorisé
     exit();
 }
 
@@ -91,6 +94,7 @@ $categories = query("SELECT * FROM categories")->fetchAll();
 </head>
 <body class="bg-light">
     <div class="container mt-5">
+        <?php include '../includes/session_check.php'; ?>
         <h2 class="text-center">Ajouter un Nouvel Article</h2>
         <form action="" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
@@ -115,7 +119,7 @@ $categories = query("SELECT * FROM categories")->fetchAll();
                 </select>
             </div>
             <center> <button type="submit" class="btn btn-primary">Ajouter l'article</button>
-                <a href="../public/index.php" class="btn btn-secondary">Annuler</a>
+                <a href="dashboard.php" class="btn btn-secondary">Annuler</a>
             </center>
         </form>
     </div>

@@ -1,18 +1,15 @@
 <?php
 require '../includes/db.php';
 require '../includes/functions.php';
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+include '../includes/session_check.php'; // Vérifie si l'utilisateur est connecté
 
-// Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php");
-    exit();
-}
-
-// Récupérer les articles
-$articles = query("SELECT * FROM articles ORDER BY created_at DESC")->fetchAll();
+// Récupérer les articles avec leur catégorie
+$articles = query("
+    SELECT a.*
+    FROM articles a
+    LEFT JOIN categories c ON a.id_categorie = c.id_categorie
+    ORDER BY a.created_at DESC
+")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +57,7 @@ $articles = query("SELECT * FROM articles ORDER BY created_at DESC")->fetchAll()
 <div class="container dashboard-container">
     <div class="header">
         <h2>👋 Bienvenue, <?= htmlspecialchars($_SESSION['prenom'] . ' ' . $_SESSION['nom']) ?></h2>
-        <a href="../public/logout.php" class="btn-logout">Déconnexion</a>
+        <a href="../logout.php" class="btn-logout">Déconnexion</a>
     </div>
 
     <div class="mt-4">
@@ -68,13 +65,27 @@ $articles = query("SELECT * FROM articles ORDER BY created_at DESC")->fetchAll()
     </div>
 
     <div class="mt-4">
+    <!-- Tableau pour organisation des boutons -->
+        <table class="table-controls">
+            <tr>
+                <td class="text-end">
+                    <div class="full-width">
+                        <?php if ($_SESSION['role'] === 'admin') : ?>
+                            <a href="manage_users.php" class="btn btn-secondary">👥 Gérer les utilisateurs</a>
+                        <?php endif; ?>
+                        <a href="../index.php" class="btn btn-secondary ms-auto">⬅ Retour à l'accueil</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <br> <br>
         <h4>📜 Liste des articles</h4>
         <?php if (count($articles) > 0) : ?>
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Titre</th>
+                        <th>Catégorie</th>
                         <th>Date</th>
                         <th>Actions</th>
                     </tr>
@@ -82,12 +93,14 @@ $articles = query("SELECT * FROM articles ORDER BY created_at DESC")->fetchAll()
                 <tbody>
                     <?php foreach ($articles as $article) : ?>
                         <tr>
-                            <td><?= htmlspecialchars($article['id']) ?></td>
                             <td><?= sanitize($article['title']) ?></td>
+                            <td><?= htmlspecialchars($article['nom_categorie'] ?? 'Non classé') ?></td>
                             <td><?= date('d-m-Y', strtotime($article['created_at'])) ?></td>
                             <td>
-                                <a href="edit_article.php?id=<?= $article['id'] ?>" class="btn btn-warning btn-sm">✏️ Modifier</a>
-                                <a href="delete_article.php?id=<?= $article['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cet article ?')">🗑 Supprimer</a>
+                            <?php if (isset($_SESSION['user_id']) && ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $article['id_utilisateur'])): ?>
+                                <a href="edit_article.php?id=<?= urlencode($article['id']) ?>" class="btn btn-warning btn-sm">✏️ Modifier</a>
+                                <a href="delete_article.php?id=<?= urlencode($article['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cet article ?')">🗑 Supprimer</a>
+                            <?php endif; ?>                            
                             </td>
                         </tr>
                     <?php endforeach; ?>

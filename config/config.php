@@ -5,9 +5,9 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // Configuration de la base de données avec Docker
 $host = 'localhost'; // Nom du conteneur Docker MySQL
-$dbname = 'cms';
-$username = 'root';
-$password = '';
+$dbname = 'cms_maison';
+$username = 'cms_user';
+$password = '1IxDRgiA[-znLp5E';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);

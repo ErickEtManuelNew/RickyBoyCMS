@@ -39,13 +39,14 @@ if (!$article) {
 </head>
 <body class="bg-light">
     <div class="container container-center">
+        <?php include '../includes/session_check.php'; ?>
         <h2 class="text-success">✅ Article ajouté avec succès !</h2>
         <p class="text-muted">Votre article <strong>"<?= htmlspecialchars($article['title']) ?>"</strong> a bien été publié.</p>
 
         <div class="mt-4">
             <a href="dashboard.php" class="btn btn-primary btn-custom">🔙 Retour aux articles</a>
-            <a href="../public/add_article.php" class="btn btn-success btn-custom">➕ Ajouter un nouvel article</a>
-            <a href="../public/article.php?id=<?= $id_article ?>" class="btn btn-info btn-custom">👀 Voir l'article</a>
+            <a href="add_article.php" class="btn btn-success btn-custom">➕ Ajouter un nouvel article</a>
+            <a href="../article.php?id=<?= $id_article ?>" class="btn btn-info btn-custom">👀 Voir l'article</a>
         </div>
     </div>
 </body>
