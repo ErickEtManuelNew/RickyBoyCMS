@@ -6,7 +6,7 @@ CREATE TABLE users(
     nom VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     photo_utilisateur VARCHAR(255) DEFAULT NULL,
-    PASSWORD VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'rédacteur', 'utilisateur') NOT NULL DEFAULT 'utilisateur',
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ); CREATE TABLE categories(

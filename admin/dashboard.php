@@ -5,7 +5,7 @@ include '../includes/session_check.php'; // Vérifie si l'utilisateur est connec
 
 // Récupérer les articles avec leur catégorie
 $articles = query("
-    SELECT a.*
+    SELECT a.*, c.nom_categorie
     FROM articles a
     LEFT JOIN categories c ON a.id_categorie = c.id_categorie
     ORDER BY a.created_at DESC
