@@ -1,5 +1,6 @@
-CREATE DATABASE cms_maison DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; USE
-    cms_maison;
+CREATE DATABASE cms_maison DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; 
+
+USE cms_maison;
 CREATE TABLE users(
     id INT AUTO_INCREMENT PRIMARY KEY,
     prenom VARCHAR(100) NOT NULL,
@@ -8,14 +9,17 @@ CREATE TABLE users(
     photo_utilisateur VARCHAR(255) DEFAULT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'rédacteur', 'utilisateur') NOT NULL DEFAULT 'utilisateur',
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    email_verifie BOOLEAN DEFAULT FALSE,
+    token VARCHAR(255) NULL,
+    token_expiration DATETIME NULL    
 ); CREATE TABLE categories(
     id_categorie INT AUTO_INCREMENT PRIMARY KEY,
     nom_categorie VARCHAR(100) NOT NULL UNIQUE
 ); CREATE TABLE articles(
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
+    content longtext NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     image VARCHAR(255) DEFAULT NULL,
     id_categorie INT NOT NULL,
@@ -27,40 +31,16 @@ CREATE TABLE users(
     nom,
     email,
     password,
-    role
+    role,
+    email_verifie
 )
 VALUES(
     'Admin',
     'Principal',
     'admin@example.com',
-    '$2y$10$ABCDE...',
-    'admin'
-),(
-    'Jean',
-    'Dupont',
-    'jean@example.com',
-    '$2y$10$FGHIJ...',
-    'rédacteur'
+    '$2y$10$RBWHuvgC/IQUwMq8TdiuK.yvHJ.I.3cVje7pKQt37lUHkPZ7EOD7C',
+    'admin',
+    1
 );
 INSERT INTO categories(nom_categorie)
 VALUES('Technologie'),('Science'),('Sport'),('Culture');
-INSERT INTO articles(
-    title,
-    content,
-    image,
-    id_categorie,
-    id_utilisateur
-)
-VALUES(
-    'Introduction à PHP',
-    'PHP est un langage serveur puissant...',
-    NULL,
-    1,
-    2
-),(
-    'Découverte de l\'IA',
-    'L\'intelligence artificielle révolutionne...',
-    NULL,
-    2,
-    2
-);

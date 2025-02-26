@@ -1,6 +1,7 @@
 <?php
 require '../includes/db.php';
 require '../includes/functions.php';
+include '../includes/session_check.php';
 
 if (!isset($_GET['id'])) {
     die("Article introuvable.");
@@ -30,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="bg-light">
     
     <div class="container mt-5">
-        <?php include '../includes/session_check.php'; ?>        
         <h1 class="text-center mb-4">Modifier l'Article</h1>
         <form method="POST">
             <div class="mb-3">

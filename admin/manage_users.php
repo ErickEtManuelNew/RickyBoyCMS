@@ -1,5 +1,6 @@
 <?php
 require '../includes/db.php';
+include '../includes/session_check.php';
 
 $users = query("SELECT * FROM users")->fetchAll();
 ?>

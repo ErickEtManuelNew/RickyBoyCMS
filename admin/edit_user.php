@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prenom = trim($_POST['prenom']);
     $nom = trim($_POST['nom']);
     $email = trim($_POST['email']);
-    $role = $_POST['role'];
+    $role = ($user['id'] === $_SESSION['user_id']) ? 'admin' : $_POST['role'];
 
     // Vérifier que les champs ne sont pas vides
     if (empty($prenom) || empty($nom) || empty($email)) {

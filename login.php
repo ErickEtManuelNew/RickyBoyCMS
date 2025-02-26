@@ -1,5 +1,19 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 require './includes/db.php'; // Connexion à la base
+
+// Si un timeout s'est produit, réinitialiser la session proprement
+if (isset($_GET['timeout'])) {
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_unset();
+        session_destroy();
+        session_start(); // 🔥 Redémarre une session propre
+        session_regenerate_id(true);
+    }
+    $error = 'Votre session a expiré pour inactivité. Veuillez vous reconnecter.';
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
@@ -8,17 +22,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = query("SELECT * FROM users WHERE email = ?", [$email]);
     $user = $stmt->fetch();
 
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['prenom'] = $user['prenom'];
-        $_SESSION['nom'] = $user['nom'];        
-        $_SESSION['role'] = $user['role'];  // 🔥 On stocke le rôle
+    if ($user) {
+        // 🔥 Vérifier si l'email a été confirmé
+        if ($user['email_verifie'] == 0) {
+            $error = "Votre email n'a pas été vérifié. Veuillez confirmer votre adresse avant de vous connecter.";
+        } elseif (password_verify($password, $user['password'])) {
+            // 🔥 Stocker l'utilisateur en session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['prenom'] = $user['prenom'];
+            $_SESSION['nom'] = $user['nom'];
+            $_SESSION['role'] = $user['role'];
 
-        header("Location: index.php");
-        exit();
+            header("Location: index.php");
+            exit();
+        } else {
+            $error = "Identifiants incorrects.";
+        }
     } else {
         $error = "Identifiants incorrects.";
-    }
+    }    
 }
 ?>
 <!DOCTYPE html>

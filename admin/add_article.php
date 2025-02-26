@@ -1,6 +1,7 @@
 <?php
 require '../includes/db.php';
 require '../includes/functions.php';
+include '../includes/session_check.php';
 
 $targetDir = "../uploads/"; // Dossier d'upload
 
@@ -94,7 +95,6 @@ $categories = query("SELECT * FROM categories")->fetchAll();
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <?php include '../includes/session_check.php'; ?>
         <h2 class="text-center">Ajouter un Nouvel Article</h2>
         <form action="" method="POST" enctype="multipart/form-data">
             <div class="mb-3">

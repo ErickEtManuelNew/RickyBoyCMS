@@ -1,6 +1,7 @@
 <?php
 require '../includes/db.php';
 require '../includes/functions.php';
+include '../includes/session_check.php';
 
 if (!isset($_GET['id'])) {
     die("Erreur : Aucun article trouvé.");
@@ -39,7 +40,6 @@ if (!$article) {
 </head>
 <body class="bg-light">
     <div class="container container-center">
-        <?php include '../includes/session_check.php'; ?>
         <h2 class="text-success">✅ Article ajouté avec succès !</h2>
         <p class="text-muted">Votre article <strong>"<?= htmlspecialchars($article['title']) ?>"</strong> a bien été publié.</p>
 

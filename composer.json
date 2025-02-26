@@ -1,0 +1,11 @@
+{
+    "name": "root/htdocs",
+    "autoload": {
+        "psr-4": {
+            "Root\\Htdocs\\": "src/"
+        }
+    },
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    }
+}

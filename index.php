@@ -1,10 +1,10 @@
 <?php
-require './includes/db.php';
+require './includes/session_check.php'; // Vérification de session et timeout
+require './config/config.php'; // Charger la configuration
+require './includes/db.php'; // Connexion à la base de données
 require './includes/functions.php';
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+// Récupérer les articles avec leurs catégories
 $articles = query("SELECT a.*, c.nom_categorie FROM articles a 
                    JOIN categories c ON a.id_categorie = c.id_categorie
                    ORDER BY created_at DESC")->fetchAll();
@@ -20,6 +20,7 @@ $articles = query("SELECT a.*, c.nom_categorie FROM articles a
         .article-img {
             height: 200px;
             object-fit: cover;
+            width: 100%;
         }
         .card-text {
             color: #555;
@@ -27,32 +28,47 @@ $articles = query("SELECT a.*, c.nom_categorie FROM articles a
         .nav-link {
             color: white !important;
         }
+        .card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body class="bg-light">
-    <!-- Contenu principal -->
+    <?php include './includes/header.php'; ?> <!-- Ajout du header global -->
+
     <div class="container mt-5">
-        <?php include './includes/header.php'; ?> <!-- Ajout du header ici -->
         <h1 class="text-center mb-4">📜 Liste des Articles</h1>
+
         <div class="row">
             <?php if (count($articles) > 0): ?>
                 <?php foreach ($articles as $article): ?>
                     <div class="col-md-6 mb-4">
-                        <div class="card h-100">
-                            <?php if (!empty($article['image'])): ?>
-                                <img src="../uploads/<?= sanitize($article['image']) ?>" class="card-img-top article-img" alt="Image de l'article">
-                            <?php else: ?>
-                                <img src="../assets/default.jpg" class="card-img-top article-img" alt="Image par défaut">
-                            <?php endif; ?>
+                        <div class="card h-100 shadow-sm">
+                            <div class="position-relative">
+                                <?php if (!empty($article['image'])): ?>
+                                    <img src="uploads/<?= sanitize($article['image']) ?>" class="card-img-top article-img" alt="Image de l'article">
+                                <?php else: ?>
+                                    <img src="assets/default.jpg" class="card-img-top article-img" alt="Image par défaut">
+                                <?php endif; ?>
+                            </div>
                             <div class="card-body">
                                 <h2 class="card-title"><?= sanitize($article['title']) ?></h2>
-                                <p class="card-text"><small class="text-muted">Publié le <?= date('d-m-Y', strtotime($article['created_at'])) ?> | Catégorie : <?= sanitize($article['nom_categorie']) ?></small></p>
-                                <p class="card-text"><?= substr(sanitize($article['content']), 0, 200) ?>...</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Publié le <?= date('d-m-Y', strtotime($article['created_at'])) ?> | 
+                                        Catégorie : <?= sanitize($article['nom_categorie']) ?>
+                                    </small>
+                                </p>
+                                <p class="card-text"><?= htmlspecialchars(mb_strimwidth($article['content'], 0, 200, "...")) ?></p>
                                 <a class="btn btn-primary" href="article.php?id=<?= $article['id'] ?>">Lire la suite</a>
 
+                                <!-- Boutons Modifier et Supprimer (Seulement pour Admin et Auteur) -->
                                 <?php if (isset($_SESSION['user_id']) && ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $article['id_utilisateur'])): ?>
-                                    <a class="btn btn-warning" href="../admin/edit_article.php?id=<?= $article['id'] ?>">Modifier</a>
-                                    <a class="btn btn-danger" href="../admin/delete_article.php?id=<?= $article['id'] ?>" onclick="return confirm('Voulez-vous vraiment supprimer cet article ?');">Supprimer</a>
+                                    <a class="btn btn-warning" href="admin/edit_article.php?id=<?= $article['id'] ?>">Modifier</a>
+                                    <a class="btn btn-danger" href="admin/delete_article.php?id=<?= $article['id'] ?>" onclick="return confirm('Voulez-vous vraiment supprimer cet article ?');">Supprimer</a>
                                 <?php endif; ?>
                             </div>
                         </div>

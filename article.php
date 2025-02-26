@@ -1,6 +1,7 @@
 <?php
 require './includes/db.php';
 require './includes/functions.php';
+require './includes/session_check.php';
 
 if (!isset($_GET['id'])) {
     die("Article introuvable.");
