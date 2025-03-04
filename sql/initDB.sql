@@ -1,5 +1,9 @@
 CREATE DATABASE cms_maison DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; 
 
+CREATE USER 'cms_user'@'localhost' IDENTIFIED BY '1IxDRgiA[-znLp5E';
+GRANT ALL PRIVILEGES ON cms_maison.* TO 'cms_user'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
 USE cms_maison;
 CREATE TABLE users(
     id INT AUTO_INCREMENT PRIMARY KEY,
